@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en-IE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Radiance Collections</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+:root{
+  --bg:#F2F2F6; --surface:#FFFFFF; --ink:#17162A; --muted:#62607A; --line:#DEDCE8;
+  --accent:#7B2FB0; --accent-soft:#EFE6F7; --done:#1F7A4D; --done-soft:#E3F2EA; --warn:#A4500B; --warn-soft:#FBEBDD;
+  --display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#121120; --surface:#1C1A2E; --ink:#EEEDF6; --muted:#A3A0BC; --line:#2F2C46;
+  --accent:#C38BEA; --accent-soft:#2D2244; --done:#5FCB93; --done-soft:#17302A; --warn:#F2A766; --warn-soft:#3A2717; color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:720px;margin:0 auto;padding-block:16px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.12em;font-size:.8rem;color:var(--accent);margin:0}
+h1{font-family:var(--display);font-weight:700;font-size:2rem;line-height:1;margin:2px 0 0}
+.sub{margin:6px 0 0;color:var(--muted);font-size:.92rem}
+.staff{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted);flex-wrap:wrap}
+.staff b{color:var(--ink)}
+.linkbtn{font:inherit;font-size:.9rem;background:none;border:0;color:var(--accent);text-decoration:underline;cursor:pointer;padding:0}
+.tally{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0}
+.tile b{display:block;font-family:var(--display);font-size:1.7rem;line-height:1;font-variant-numeric:tabular-nums}
+.tile span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+@media (max-width:420px){.tally{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.search{position:sticky;top:0;z-index:5;background:var(--bg);padding-block:6px;display:flex;flex-direction:column;gap:8px}
+.search input{width:100%;font:inherit;font-size:1.1rem;padding:14px 14px;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
+.search input:focus{border-color:var(--accent);outline:none}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface);align-self:flex-start}
+.seg button{font:inherit;font-size:.9rem;border:0;background:transparent;color:var(--muted);padding:9px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--surface);font-weight:700}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.list{display:flex;flex-direction:column;gap:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 12px 6px 14px}
+.card.done{background:var(--done-soft);border-color:transparent}
+.head{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.who{font-weight:700;font-size:1.1rem}
+.card.done .who{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums;color:var(--muted)}
+.pill{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.pill.ok{background:var(--done);color:var(--surface)}
+.flag{margin-top:8px;font-size:.88rem;background:var(--warn-soft);color:var(--warn);border-radius:6px;padding:6px 9px}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.item:first-of-type{margin-top:8px}
+.card.done .item{border-color:transparent}
+.what{font-size:1rem}
+.what b{font-family:var(--display);font-size:1.25rem;font-variant-numeric:tabular-nums;margin-right:4px}
+.meta{font-size:.8rem;color:var(--done);margin-top:2px}
+.tick{width:60px;height:60px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--muted);cursor:pointer;display:grid;place-items:center}
+.tick svg{width:30px;height:30px}
+.tick.on{background:var(--done);border-color:var(--done);color:var(--surface)}
+.tick[disabled]{opacity:.5;cursor:progress}
+.confirm{display:flex;gap:6px}
+.confirm button{font:inherit;font-size:.85rem;padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.confirm .undo{border-color:var(--warn);color:var(--warn)}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:22px;text-align:center;color:var(--muted)}
+.status{font-size:.82rem;color:var(--muted)}
+.status.err{color:var(--warn)}
+footer{font-size:.85rem;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+footer a{color:var(--accent)}
+.gate{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.gate input{font:inherit;font-size:1.1rem;padding:12px;border-radius:8px;border:2px solid var(--line);background:var(--bg);color:var(--ink);text-transform:uppercase;max-width:200px}
+.gate button{font:inherit;font-weight:700;padding:12px 16px;border-radius:8px;border:0;background:var(--accent);color:var(--surface);cursor:pointer;align-self:flex-start}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Board &amp; Brewed · Riftbound</p>
+    <h1>Radiance collections</h1>
+    <p class="sub">Search the customer, check the order, tick each item as it goes over the counter.</p>
+  </header>
+
+  <div id="gate" class="gate" hidden>
+    <label for="initials"><b>Your initials</b><br><span class="status">So we know who handed each order over.</span></label>
+    <input id="initials" maxlength="6" autocomplete="off" placeholder="e.g. JP">
+    <button id="saveInitials" type="button">Start</button>
+  </div>
+
+  <div id="app" hidden>
+    <div class="staff">Ticking as <b id="me"></b> <button class="linkbtn" id="changeMe" type="button">change</button></div>
+
+    <section class="tally" aria-label="Still to hand out">
+      <div class="tile"><span>Orders left</span><b id="t-orders">–</b></div>
+      <div class="tile"><span>Cases left</span><b id="t-cases">–</b></div>
+      <div class="tile"><span>Displays left</span><b id="t-displays">–</b></div>
+      <div class="tile"><span>Vaults left</span><b id="t-vaults">–</b></div>
+    </section>
+
+    <div class="search">
+      <input id="q" type="search" inputmode="search" placeholder="Name or order number" aria-label="Search by name or order number" autocomplete="off">
+      <div class="seg" role="group" aria-label="Show">
+        <button type="button" aria-pressed="true" data-f="open">To collect</button>
+        <button type="button" aria-pressed="false" data-f="done">Done</button>
+        <button type="button" aria-pressed="false" data-f="all">All</button>
+      </div>
+    </div>
+
+    <div class="list" id="list"><div class="empty">Loading orders…</div></div>
+    <p class="status" id="status"></p>
+  </div>
+
+  <div id="nokey" class="empty" hidden>This page needs the shop link. Scan the QR code behind the counter.</div>
+
+  <footer id="foot" hidden>
+    <a href="https://docs.google.com/spreadsheets/d/1GYlbzOvg9eej3qFc3FZXKPHGdB0UzIlllGl-cXTSEGo/edit" target="_blank" rel="noopener">Open the Google Sheet</a>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var API='https://ycajinletezqllvnjsct.supabase.co/functions/v1/radiance-collections';
+  var TICK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return null;}}
+
+  // Shop key: from the QR link, then remembered on this device, then stripped from the address bar.
+  var params=new URLSearchParams(location.search);
+  var key=params.get('k')||ls('rc_key');
+  if(params.get('k')){ls('rc_key',params.get('k'));history.replaceState(null,'',location.pathname);}
+  var me=ls('rc_me')||'';
+  var items=[], filter='open', query='', confirmId=null, busy={}, timer=null;
+  var $=function(id){return document.getElementById(id);};
+
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function when(iso){try{return new Date(iso).toLocaleString('en-IE',{timeZone:'Europe/Dublin',weekday:'short',hour:'2-digit',minute:'2-digit'});}catch(e){return '';}}
+  function setStatus(t,err){var s=$('status');s.textContent=t||'';s.className='status'+(err?' err':'');}
+
+  function show(){
+    $('nokey').hidden=!!key;
+    if(!key){$('gate').hidden=true;$('app').hidden=true;$('foot').hidden=true;return;}
+    $('gate').hidden=!!me; $('app').hidden=!me; $('foot').hidden=!me;
+    $('me').textContent=me;
+    if(!me){setTimeout(function(){$('initials').focus();},50);}
+  }
+  $('saveInitials').addEventListener('click',function(){
+    var v=$('initials').value.trim().toUpperCase();if(!v){$('initials').focus();return;}
+    me=v;ls('rc_me',v);show();load();
+  });
+  $('initials').addEventListener('keydown',function(e){if(e.key==='Enter')$('saveInitials').click();});
+  $('changeMe').addEventListener('click',function(){me='';ls('rc_me',null);$('initials').value='';show();});
+
+  function orders(){
+    var map={},list=[];
+    items.forEach(function(i){
+      if(!map[i.order_no]){map[i.order_no]={order_no:i.order_no,customer:i.customer,method:i.method,sort:i.sort,flag:null,items:[]};list.push(map[i.order_no]);}
+      var o=map[i.order_no];o.items.push(i);if(i.flag)o.flag=i.flag;
+    });
+    list.forEach(function(o){o.done=o.items.every(function(i){return i.collected;});});
+    return list;
+  }
+
+  function tally(list){
+    var c=0,d=0,v=0;
+    items.forEach(function(i){if(i.collected)return;if(i.kind==='case')c+=i.qty;else if(i.kind==='display')d+=i.qty;else if(i.kind==='vault')v+=i.qty;});
+    $('t-orders').textContent=list.filter(function(o){return !o.done;}).length;
+    $('t-cases').textContent=c;$('t-displays').textContent=d;$('t-vaults').textContent=v;
+  }
+
+  function render(){
+    var list=orders();tally(list);
+    var q=query.trim().toLowerCase().replace(/^#/,'');
+    var rows=list.filter(function(o){
+      if(filter==='open'&&o.done)return false;
+      if(filter==='done'&&!o.done)return false;
+      if(!q)return true;
+      return o.customer.toLowerCase().indexOf(q)>-1||o.order_no.indexOf(q)>-1;
+    });
+    var el=$('list');
+    if(!items.length){el.innerHTML='<div class="empty">No orders found.</div>';return;}
+    if(!rows.length){
+      el.innerHTML='<div class="empty">'+(q?'No order matches "'+esc(query)+'".'+(filter!=='all'?' Try All.':''):filter==='done'?'Nothing handed over yet.':'Everything has been handed over.')+'</div>';return;
+    }
+    el.innerHTML=rows.map(function(o){
+      var lines=o.items.map(function(i){
+        var right;
+        if(confirmId===i.id){
+          right='<div class="confirm"><button type="button" class="undo" data-act="undo" data-id="'+i.id+'">Untick</button><button type="button" data-act="keep">Keep</button></div>';
+        }else{
+          right='<button type="button" class="tick'+(i.collected?' on':'')+'" data-act="tick" data-id="'+i.id+'" aria-pressed="'+i.collected+'" aria-label="'+(i.collected?'Ticked: ':'Tick: ')+esc(i.qty+' '+i.label+' for '+o.customer)+'"'+(busy[i.id]?' disabled':'')+'>'+TICK+'</button>';
+        }
+        var meta=i.collected?'<div class="meta">'+(o.method==='Ship'?'Shipped':'Handed over')+' '+esc(when(i.collected_at))+(i.collected_by?' by '+esc(i.collected_by):'')+'</div>':'';
+        return '<div class="item"><div style="min-width:0"><div class="what"><b>'+i.qty+'×</b>'+esc(i.label)+'</div>'+meta+'</div>'+right+'</div>';
+      }).join('');
+      return '<article class="card'+(o.done?' done':'')+'"><div class="head"><span class="who">'+esc(o.customer)+'</span><span class="num">#'+esc(o.order_no)+'</span><span class="pill'+(o.done?' ok':'')+'">'+(o.done?'Done':(o.method==='Ship'?'Ship':'Collect'))+'</span></div>'+
+        (o.flag?'<div class="flag">'+esc(o.flag)+'</div>':'')+lines+'</article>';
+    }).join('');
+  }
+
+  function load(quiet){
+    if(!key||!me)return;
+    fetch(API+'?k='+encodeURIComponent(key),{cache:'no-store'}).then(function(r){
+      return r.json().then(function(d){return {ok:r.ok,status:r.status,d:d};});
+    }).then(function(res){
+      if(res.status===401){ls('rc_key',null);key=null;show();return;}
+      if(!res.ok)throw new Error(res.d&&res.d.error||'Could not load');
+      items=res.d.items||[];render();
+      setStatus('Up to date '+new Date().toLocaleTimeString('en-IE',{hour:'2-digit',minute:'2-digit'})+'. Refreshes every 15 seconds.');
+    }).catch(function(){if(!quiet)setStatus('Could not load the orders. Check the Wi-Fi and pull to refresh.',true);else setStatus('Offline, showing the last list loaded. Retrying…',true);});
+  }
+
+  function save(id,val){
+    busy[id]=true;render();
+    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({k:key,id:id,collected:val,by:me})})
+      .then(function(r){return r.json().then(function(d){return {ok:r.ok,d:d};});})
+      .then(function(res){
+        if(!res.ok)throw new Error(res.d&&res.d.error||'Save failed');
+        items=items.map(function(i){return i.id===id?res.d.item:i;});
+        delete busy[id];render();setStatus(val?'Ticked.':'Unticked.');
+      }).catch(function(e){delete busy[id];render();setStatus('That did not save: '+e.message+'. Try again.',true);});
+  }
+
+  $('list').addEventListener('click',function(ev){
+    var b=ev.target.closest('button');if(!b)return;
+    var act=b.getAttribute('data-act'),id=Number(b.getAttribute('data-id'));
+    if(act==='tick'){
+      var it=items.find(function(i){return i.id===id;});if(!it)return;
+      if(it.collected){confirmId=id;render();return;}
+      confirmId=null;save(id,true);
+    }else if(act==='undo'){confirmId=null;save(id,false);}
+    else if(act==='keep'){confirmId=null;render();}
+  });
+  document.querySelectorAll('.seg button').forEach(function(b){b.addEventListener('click',function(){
+    filter=b.getAttribute('data-f');
+    document.querySelectorAll('.seg button').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});
+    confirmId=null;render();
+  });});
+  $('q').addEventListener('input',function(e){query=e.target.value;render();});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)load(true);});
+
+  show();
+  if(key&&me)load();
+  timer=setInterval(function(){if(!document.hidden&&!confirmId)load(true);},15000);
+})();
+</script>
+</body>
+</html>
