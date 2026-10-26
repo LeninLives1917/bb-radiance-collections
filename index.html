@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <meta name="referrer" content="no-referrer">
-<title>Radiance Collections</title>
+<title>Preorder Collections</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
@@ -71,6 +71,29 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .status.err{color:var(--warn)}
 footer{font-size:.85rem;color:var(--muted);display:flex;flex-direction:column;gap:4px}
 footer a{color:var(--accent)}
+.games{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.games button{flex:1;font-family:var(--display);font-weight:700;font-size:1.15rem;letter-spacing:.02em;border:0;background:transparent;color:var(--muted);padding:12px;cursor:pointer}
+.games button[aria-pressed="true"]{background:var(--accent);color:var(--surface)}
+:root[data-game="pokemon"]{--accent:#C8102E;--accent-soft:#FBE4E8}
+@media (prefers-color-scheme: dark){:root[data-game="pokemon"]{--accent:#F27A8E;--accent-soft:#3D1A22}}
+.pill.wait{background:var(--line);color:var(--muted)}
+.chips{margin:8px 0 6px;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:.95rem;display:inline-flex;align-items:center;gap:6px;padding:9px 12px;border-radius:999px;border:2px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;min-height:42px;text-align:left}
+.chip b{font-family:var(--display);font-size:1.1rem;font-variant-numeric:tabular-nums}
+.chip.ready{border-color:var(--accent);background:var(--accent-soft)}
+.chip.collected{border-color:var(--done);background:var(--done-soft);color:var(--done);text-decoration:line-through}
+.chip.next{border-style:dashed;color:var(--muted);background:transparent}
+.chip[disabled]{opacity:.5;cursor:progress}
+.chip svg{width:16px;height:16px}
+.pconfirm{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:.9rem;margin:4px 0 8px}
+.pconfirm button{font:inherit;font-size:.85rem;padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.pconfirm .go{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:700}
+.pconfirm .undo{border-color:var(--warn);color:var(--warn)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.82rem;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:999px;border:2px solid var(--line);vertical-align:-1px;margin-right:4px}
+.legend i.r{border-color:var(--accent);background:var(--accent-soft)}
+.legend i.c{border-color:var(--done);background:var(--done-soft)}
+.legend i.n{border-style:dashed}
 .gate{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px}
 .gate input{font:inherit;font-size:1.1rem;padding:12px;border-radius:8px;border:2px solid var(--line);background:var(--bg);color:var(--ink);text-transform:uppercase;max-width:200px}
 .gate button{font:inherit;font-weight:700;padding:12px 16px;border-radius:8px;border:0;background:var(--accent);color:var(--surface);cursor:pointer;align-self:flex-start}
@@ -78,10 +101,19 @@ footer a{color:var(--accent)}
 </head>
 <body>
 <div class="wrap">
-  <header>
+  <div class="games" role="group" aria-label="Game">
+    <button type="button" aria-pressed="true" data-g="rift">Riftbound</button>
+    <button type="button" aria-pressed="false" data-g="pokemon">Pokémon 30th</button>
+  </div>
+  <header id="h-rift">
     <p class="eyebrow">Board &amp; Brewed · Riftbound</p>
     <h1>Radiance collections</h1>
     <p class="sub">Search the customer, check the order, tick each item as it goes over the counter.</p>
+  </header>
+  <header id="h-poke" hidden>
+    <p class="eyebrow">Board &amp; Brewed · Pokémon 30th Celebration</p>
+    <h1>30th preorder collections</h1>
+    <p class="sub">Tap an item when it goes over the counter. Dashed items are not in yet and wait for the next drop from Asmodee.</p>
   </header>
 
   <div id="gate" class="gate" hidden>
@@ -113,6 +145,31 @@ footer a{color:var(--accent)}
     <p class="status" id="status"></p>
   </div>
 
+  <div id="papp" hidden>
+    <div class="staff">Ticking as <b id="pme"></b> <button class="linkbtn" id="pchangeMe" type="button">change</button></div>
+
+    <section class="tally" aria-label="Pokémon status">
+      <div class="tile"><span>Ready to collect</span><b id="p-ready">–</b></div>
+      <div class="tile"><span>Waiting on drop</span><b id="p-wait">–</b></div>
+      <div class="tile"><span>All collected</span><b id="p-done">–</b></div>
+      <div class="tile"><span>Items in shop</span><b id="p-items">–</b></div>
+    </section>
+
+    <div class="search">
+      <input id="pq" type="search" inputmode="search" placeholder="Customer name" aria-label="Search by customer name" autocomplete="off">
+      <div class="seg" role="group" aria-label="Show">
+        <button type="button" aria-pressed="true" data-pf="ready">Ready</button>
+        <button type="button" aria-pressed="false" data-pf="wait">Waiting</button>
+        <button type="button" aria-pressed="false" data-pf="done">Done</button>
+        <button type="button" aria-pressed="false" data-pf="all">All</button>
+      </div>
+    </div>
+    <div class="legend"><span><i class="r"></i>In the shop, tap to hand over</span><span><i class="c"></i>Collected</span><span><i class="n"></i>Not until the next drop</span></div>
+
+    <div class="list" id="plist"><div class="empty">Loading customers…</div></div>
+    <p class="status" id="pstatus"></p>
+  </div>
+
   <div id="nokey" class="empty" hidden>This page needs the shop link. Scan the QR code behind the counter.</div>
 
   <footer id="foot" hidden>
@@ -123,6 +180,7 @@ footer a{color:var(--accent)}
 <script>
 (function(){
   var API='https://ycajinletezqllvnjsct.supabase.co/functions/v1/radiance-collections';
+  var PAPI='https://ycajinletezqllvnjsct.supabase.co/functions/v1/pokemon-collections';
   var TICK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return null;}}
 
@@ -138,16 +196,25 @@ footer a{color:var(--accent)}
   function when(iso){try{return new Date(iso).toLocaleString('en-IE',{timeZone:'Europe/Dublin',weekday:'short',hour:'2-digit',minute:'2-digit'});}catch(e){return '';}}
   function setStatus(t,err){var s=$('status');s.textContent=t||'';s.className='status'+(err?' err':'');}
 
+  var game=ls('rc_game')||'rift';
   function show(){
     $('nokey').hidden=!!key;
-    if(!key){$('gate').hidden=true;$('app').hidden=true;$('foot').hidden=true;return;}
-    $('gate').hidden=!!me; $('app').hidden=!me; $('foot').hidden=!me;
-    $('me').textContent=me;
+    document.documentElement.setAttribute('data-game',game);
+    $('h-rift').hidden=game!=='rift'; $('h-poke').hidden=game!=='pokemon';
+    document.querySelectorAll('.games button').forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-g')===game));});
+    if(!key){$('gate').hidden=true;$('app').hidden=true;$('papp').hidden=true;$('foot').hidden=true;return;}
+    $('gate').hidden=!!me; $('app').hidden=!me||game!=='rift'; $('papp').hidden=!me||game!=='pokemon'; $('foot').hidden=!me||game!=='rift';
+    $('me').textContent=me; $('pme').textContent=me;
     if(!me){setTimeout(function(){$('initials').focus();},50);}
   }
+  document.querySelectorAll('.games button').forEach(function(b){b.addEventListener('click',function(){
+    game=b.getAttribute('data-g');ls('rc_game',game);show();
+    if(game==='pokemon'&&!pitems.length)pload();
+  });});
+  $('pchangeMe').addEventListener('click',function(){me='';ls('rc_me',null);$('initials').value='';show();});
   $('saveInitials').addEventListener('click',function(){
     var v=$('initials').value.trim().toUpperCase();if(!v){$('initials').focus();return;}
-    me=v;ls('rc_me',v);show();load();
+    me=v;ls('rc_me',v);show();load();pload();
   });
   $('initials').addEventListener('keydown',function(e){if(e.key==='Enter')$('saveInitials').click();});
   $('changeMe').addEventListener('click',function(){me='';ls('rc_me',null);$('initials').value='';show();});
@@ -232,17 +299,105 @@ footer a{color:var(--accent)}
     }else if(act==='undo'){confirmId=null;save(id,false);}
     else if(act==='keep'){confirmId=null;render();}
   });
-  document.querySelectorAll('.seg button').forEach(function(b){b.addEventListener('click',function(){
+  document.querySelectorAll('[data-f]').forEach(function(b){b.addEventListener('click',function(){
     filter=b.getAttribute('data-f');
-    document.querySelectorAll('.seg button').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});
+    document.querySelectorAll('[data-f]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});
     confirmId=null;render();
   });});
   $('q').addEventListener('input',function(e){query=e.target.value;render();});
-  document.addEventListener('visibilitychange',function(){if(!document.hidden)load(true);});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden){load(true);pload(true);}});
+
+  /* ---------- Pokémon 30th ---------- */
+  var pitems=[], pfilter='ready', pquery='', ppending=null, pbusy={};
+  function pstatus(t,err){var s=$('pstatus');s.textContent=t||'';s.className='status'+(err?' err':'');}
+  function pcustomers(){
+    var map={},list=[];
+    pitems.forEach(function(i){
+      if(!map[i.customer]){map[i.customer]={customer:i.customer,note:null,sort:i.sort,items:[]};list.push(map[i.customer]);}
+      var c=map[i.customer];c.items.push(i);if(i.note)c.note=i.note;
+    });
+    list.forEach(function(c){
+      c.state=c.items.every(function(i){return i.status==='collected';})?'done':c.items.some(function(i){return i.status==='ready';})?'ready':'wait';
+    });
+    return list;
+  }
+  function ptally(list){
+    var ready=0,wait=0,done=0,inshop=0;
+    list.forEach(function(c){if(c.state==='done')done++;else if(c.state==='ready')ready++;else wait++;});
+    pitems.forEach(function(i){if(i.status==='ready')inshop+=i.qty;});
+    $('p-ready').textContent=ready;$('p-wait').textContent=wait;$('p-done').textContent=done;$('p-items').textContent=inshop;
+  }
+  function prender(){
+    var list=pcustomers();ptally(list);
+    var q=pquery.trim().toLowerCase();
+    var rows=list.filter(function(c){
+      if(pfilter!=='all'&&c.state!==pfilter)return false;
+      return !q||c.customer.toLowerCase().indexOf(q)>-1;
+    });
+    var el=$('plist');
+    if(!pitems.length){el.innerHTML='<div class="empty">No Pokémon preorders found.</div>';return;}
+    if(!rows.length){el.innerHTML='<div class="empty">'+(q?'No customer matches "'+esc(pquery)+'".'+(pfilter!=='all'?' Try All.':''):pfilter==='ready'?'Nothing waiting in the shop.':pfilter==='wait'?'Nobody is waiting on the next drop.':pfilter==='done'?'Nobody has collected everything yet.':'No customers.')+'</div>';return;}
+    el.innerHTML=rows.map(function(c){
+      var pill=c.state==='done'?'<span class="pill ok">Done</span>':c.state==='ready'?'<span class="pill">Ready to collect</span>':'<span class="pill wait">Next drop</span>';
+      var chips=c.items.map(function(i){
+        var al=(i.status==='collected'?'Collected: ':i.status==='ready'?'Hand over: ':'Not in yet: ')+i.qty+' '+i.label;
+        return '<li><button type="button" class="chip '+i.status+'" data-pact="chip" data-id="'+i.id+'" aria-label="'+esc(al)+'"'+(pbusy[i.id]?' disabled':'')+'>'+(i.status==='collected'?TICK:'')+'<b>'+i.qty+'×</b>'+esc(i.label)+'</button></li>';
+      }).join('');
+      var confirm='';
+      if(ppending&&ppending.customer===c.customer){
+        var it=pitems.find(function(i){return i.id===ppending.id;})||{};
+        if(it.status==='ready')confirm='<div class="pconfirm"><span>Hand over '+it.qty+'× '+esc(it.label)+'?</span><button type="button" class="go" data-pact="set" data-to="collected">Yes, given</button><button type="button" data-pact="cancel">Cancel</button></div>';
+        else if(it.status==='collected')confirm='<div class="pconfirm"><span>'+esc(it.label)+' is marked collected.</span><button type="button" class="undo" data-pact="set" data-to="ready">Untick</button><button type="button" data-pact="cancel">Keep</button></div>';
+        else confirm='<div class="pconfirm"><span>'+esc(it.label)+' is not in yet. Has it arrived?</span><button type="button" class="go" data-pact="set" data-to="ready">Yes, it\'s in</button><button type="button" data-pact="cancel">Cancel</button></div>';
+      }
+      var last=null;c.items.forEach(function(i){if(i.collected_at&&(!last||i.collected_at>last.collected_at))last=i;});
+      var meta=last?'<div class="meta">Last handed over '+esc(when(last.collected_at))+(last.collected_by?' by '+esc(last.collected_by):'')+'</div>':'';
+      return '<article class="card'+(c.state==='done'?' done':'')+'"><div class="head"><span class="who">'+esc(c.customer)+'</span>'+pill+'</div>'+
+        (c.note?'<div class="flag">'+esc(c.note)+'</div>':'')+'<ul class="chips">'+chips+'</ul>'+confirm+meta+'</article>';
+    }).join('');
+  }
+  function pload(quiet){
+    if(!key||!me)return;
+    fetch(PAPI+'?k='+encodeURIComponent(key),{cache:'no-store'}).then(function(r){
+      return r.json().then(function(d){return {ok:r.ok,status:r.status,d:d};});
+    }).then(function(res){
+      if(res.status===401){ls('rc_key',null);key=null;show();return;}
+      if(!res.ok)throw new Error(res.d&&res.d.error||'Could not load');
+      pitems=res.d.items||[];prender();
+      pstatus('Up to date '+new Date().toLocaleTimeString('en-IE',{hour:'2-digit',minute:'2-digit'})+'. Refreshes every 15 seconds.');
+    }).catch(function(){if(!quiet)pstatus('Could not load the list. Check the Wi-Fi and pull to refresh.',true);else pstatus('Offline, showing the last list loaded. Retrying…',true);});
+  }
+  function psave(id,status){
+    pbusy[id]=true;prender();
+    fetch(PAPI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({k:key,id:id,status:status,by:me})})
+      .then(function(r){return r.json().then(function(d){return {ok:r.ok,d:d};});})
+      .then(function(res){
+        if(!res.ok)throw new Error(res.d&&res.d.error||'Save failed');
+        pitems=pitems.map(function(i){return i.id===id?res.d.item:i;});
+        delete pbusy[id];prender();pstatus(status==='collected'?'Handed over.':status==='ready'?'Marked as in the shop.':'Saved.');
+      }).catch(function(e){delete pbusy[id];prender();pstatus('That did not save: '+e.message+'. Try again.',true);});
+  }
+  $('plist').addEventListener('click',function(ev){
+    var b=ev.target.closest('button');if(!b)return;
+    var act=b.getAttribute('data-pact');
+    if(act==='chip'){
+      var id=Number(b.getAttribute('data-id'));var it=pitems.find(function(i){return i.id===id;});if(!it)return;
+      ppending={id:id,customer:it.customer};prender();return;
+    }
+    if(!ppending)return;
+    var pp=ppending;ppending=null;
+    if(act==='set')psave(pp.id,b.getAttribute('data-to'));else prender();
+  });
+  document.querySelectorAll('[data-pf]').forEach(function(b){b.addEventListener('click',function(){
+    pfilter=b.getAttribute('data-pf');
+    document.querySelectorAll('[data-pf]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});
+    ppending=null;prender();
+  });});
+  $('pq').addEventListener('input',function(e){pquery=e.target.value;prender();});
 
   show();
-  if(key&&me)load();
-  timer=setInterval(function(){if(!document.hidden&&!confirmId)load(true);},15000);
+  if(key&&me){load();pload();}
+  timer=setInterval(function(){if(document.hidden)return;if(game==='rift'&&!confirmId)load(true);if(game==='pokemon'&&!ppending)pload(true);},15000);
 })();
 </script>
 </body>
