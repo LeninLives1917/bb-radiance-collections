@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pokémon 30th preorder sheet</title>
+<style>
+  :root{--ink:#1a1a1a;--mute:#666;--line:#bbb;--red:#c8102e}
+  *{box-sizing:border-box}
+  body{margin:0;font:11pt/1.35 -apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:var(--ink);background:#fff}
+  .page{max-width:210mm;margin:0 auto;padding:14mm 14mm 10mm}
+  .top{display:flex;gap:18px;align-items:flex-start;border-bottom:3px solid var(--red);padding-bottom:12px;margin-bottom:12px}
+  .top .txt{flex:1}
+  .eyebrow{margin:0;font-size:9pt;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+  h1{margin:2px 0 6px;font-size:22pt;line-height:1.1}
+  .how{margin:0;padding-left:16px}
+  .how li{margin:2px 0}
+  .qr{text-align:center;width:150px;flex:none}
+  .qr canvas,.qr img{width:150px;height:150px;display:block;margin:0 auto}
+  .qr small{display:block;font-size:8pt;color:var(--mute);margin-top:4px}
+  .warn{background:#fff3cd;border:1px solid #e0b84a;padding:8px 10px;border-radius:4px;margin:10px 0;font-size:10pt}
+  .meta{display:flex;justify-content:space-between;color:var(--mute);font-size:9pt;margin:6px 0}
+  table{width:100%;border-collapse:collapse;font-size:9.5pt}
+  th,td{border-bottom:1px solid var(--line);padding:4px 6px;vertical-align:top;text-align:left}
+  th{font-size:8.5pt;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);border-bottom:2px solid var(--ink)}
+  td.c{font-weight:700;white-space:nowrap}
+  td.box{width:28px;text-align:center}
+  .tick{display:inline-block;width:14px;height:14px;border:1.5px solid var(--ink);border-radius:2px;vertical-align:middle}
+  td.nxt{color:var(--mute);font-style:italic}
+  td.init{width:60px}
+  .foot{margin-top:10px;color:var(--mute);font-size:8.5pt}
+  .nokey{padding:30px;text-align:center}
+  .nokey a{color:var(--red)}
+  .noprint{display:flex;gap:10px;justify-content:center;padding:10px}
+  button{font:inherit;padding:8px 14px;border-radius:6px;border:1px solid var(--ink);background:#fff;cursor:pointer}
+  button.primary{background:var(--red);color:#fff;border-color:var(--red)}
+  @media print{.noprint{display:none}.page{padding:0}thead{display:table-header-group}tr{break-inside:avoid}}
+  @page{size:A4;margin:12mm}
+</style>
+</head>
+<body>
+<div class="noprint">
+  <button class="primary" id="print" type="button">Print</button>
+  <button id="back" type="button">Back to app</button>
+</div>
+<div class="page" id="page">
+  <div class="top">
+    <div class="txt">
+      <p class="eyebrow">Board &amp; Brewed · Dún Laoghaire</p>
+      <h1>Pokémon 30th preorder collections</h1>
+      <ol class="how">
+        <li>Scan the code with your phone and put in your initials.</li>
+        <li>Tap <b>Pokémon 30th</b>, search the customer's name.</li>
+        <li>Tap each item as it goes over the counter, then confirm.</li>
+        <li>Dashed items are <b>not in yet</b>. Do not hand out anything in their place.</li>
+      </ol>
+      <div class="warn"><b>Pickups are after 12pm only.</b> If someone comes earlier, ask them to come back after 12. Someone else can collect for them if the customer has told Dave the name.</div>
+    </div>
+    <div class="qr"><div id="qr"></div><small>Scan to open the collections app</small></div>
+  </div>
+  <div class="meta"><span>Paper backup. If the app is down, tick here and write your initials, then update the app later.</span><span id="asof"></span></div>
+  <table id="tbl">
+    <thead><tr><th>Customer</th><th>Ready to collect now</th><th class="box">✓</th><th class="init">Initials</th><th>Still to come (next drop)</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <p class="foot" id="foot"></p>
+</div>
+<div class="nokey" id="nokey" hidden>
+  <p>This sheet needs the shop key. Open it from the <b>Print sheet</b> link inside the app on a phone that already has access.</p>
+  <p><a href="./">Back to the app</a></p>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function(){
+  var PAPI='https://ycajinletezqllvnjsct.supabase.co/functions/v1/pokemon-collections';
+  function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return null}}
+  var params=new URLSearchParams(location.search);
+  var key=params.get('k')||ls('rc_key');
+  if(params.get('k')){ls('rc_key',key);history.replaceState(null,'',location.pathname);}
+  document.getElementById('print').onclick=function(){window.print()};
+  document.getElementById('back').onclick=function(){location.href='./'};
+  if(!key){document.getElementById('page').hidden=true;document.getElementById('nokey').hidden=false;return;}
+
+  var appUrl=location.origin+location.pathname.replace(/print\.html$/,'')+'?k='+encodeURIComponent(key);
+  new QRCode(document.getElementById('qr'),{text:appUrl,width:150,height:150,correctLevel:QRCode.CorrectLevel.M});
+
+  var NAME={"ETB":"30th ETB","DR ETB":"Destined Rivals ETB","DR Booster Display":"DR Booster Display","Booster Bundle":"Booster Bundle","Mini Tin":"Mini Tin","2-Pack Blister":"2-Pack Blister","Tech Sticker":"Tech Sticker","ex Box Sylveon":"ex Box Sylveon","ex Box Greninja":"ex Box Greninja","ex Tin Sylveon":"ex Tin Sylveon","ex Tin Greninja":"ex Tin Greninja","Poster":"Poster Collection","Binder":"Binder Collection","First Partner S3":"First Partner S3","Prismatic SPC":"Prismatic SPC","AH Premium Poster":"AH Premium Poster","UPC Day":"UPC Day","UPC Night":"UPC Night"};
+  function nice(l){var m=l.match(/^(.*?)(\s\(.*\))?$/);return (NAME[m[1]]||m[1])+(m[2]||'');}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function fmt(list){return list.map(function(i){return i.qty+' × '+nice(i.label)}).join(', ')}
+
+  fetch(PAPI+'?k='+encodeURIComponent(key)).then(function(r){
+    if(r.status===401){ls('rc_key',null);location.reload();return null;}
+    return r.json();
+  }).then(function(d){
+    if(!d)return;
+    var by={},order=[];
+    d.items.forEach(function(i){if(!by[i.customer]){by[i.customer]=[];order.push(i.customer);}by[i.customer].push(i);});
+    order.sort(function(a,b){return a.localeCompare(b,'en',{sensitivity:'base'})});
+    var rows=[],nReady=0,nWait=0,nDone=0;
+    order.forEach(function(c){
+      var it=by[c],ready=it.filter(function(i){return i.status==='ready'}),nxt=it.filter(function(i){return i.status==='next'});
+      if(!ready.length&&!nxt.length){nDone++;return;}
+      if(ready.length)nReady++;else nWait++;
+      rows.push('<tr><td class="c">'+esc(c)+'</td><td>'+(ready.length?esc(fmt(ready)):'<span style="color:#999">nothing in yet</span>')+'</td><td class="box">'+(ready.length?'<span class="tick"></span>':'')+'</td><td class="init"></td><td class="nxt">'+esc(fmt(nxt))+'</td></tr>');
+    });
+    document.getElementById('rows').innerHTML=rows.join('');
+    var now=new Date(d.now||Date.now());
+    document.getElementById('asof').textContent='Printed '+now.toLocaleDateString('en-IE',{day:'numeric',month:'short',year:'numeric'})+' '+now.toLocaleTimeString('en-IE',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('foot').textContent=nReady+' customers have something ready, '+nWait+' are waiting on the next drop, '+nDone+' fully collected (not listed). The app is always the live version; this sheet is only as current as the time printed above.';
+  }).catch(function(){document.getElementById('foot').textContent='Could not load the live list. The QR code still works.';});
+})();
+</script>
+</body>
+</html>
