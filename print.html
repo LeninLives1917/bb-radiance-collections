@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pokémon 30th preorder sheet</title>
+<title>Collections app QR and staff sheet</title>
 <style>
   :root{--ink:#1a1a1a;--mute:#666;--line:#bbb;--red:#c8102e}
   *{box-sizing:border-box}
@@ -15,8 +15,8 @@
   h1{margin:2px 0 6px;font-size:22pt;line-height:1.1}
   .how{margin:0;padding-left:16px}
   .how li{margin:2px 0}
-  .qr{text-align:center;width:150px;flex:none}
-  .qr canvas,.qr img{width:150px;height:150px;display:block;margin:0 auto}
+  .qr{text-align:center;width:220px;flex:none}
+  .qr canvas,.qr img{width:220px;height:220px;display:block;margin:0 auto}
   .qr small{display:block;font-size:8pt;color:var(--mute);margin-top:4px}
   .warn{background:#fff3cd;border:1px solid #e0b84a;padding:8px 10px;border-radius:4px;margin:10px 0;font-size:10pt}
   .meta{display:flex;justify-content:space-between;color:var(--mute);font-size:9pt;margin:6px 0}
@@ -42,21 +42,22 @@
 <div class="noprint">
   <button class="primary" id="print" type="button">Print</button>
   <button id="back" type="button">Back to app</button>
+  <button id="dl" type="button">Save QR image</button>
 </div>
 <div class="page" id="page">
   <div class="top">
     <div class="txt">
       <p class="eyebrow">Board &amp; Brewed · Dún Laoghaire</p>
-      <h1>Pokémon 30th preorder collections</h1>
+      <h1>Preorder collections app</h1>
       <ol class="how">
         <li>Scan the code with your phone and put in your initials.</li>
-        <li>Tap <b>Pokémon 30th</b>, search the customer's name.</li>
+        <li>Pick <b>Riftbound</b> or <b>Pokémon 30th</b> at the top, then search the customer's name.</li>
         <li>Tap each item as it goes over the counter, then confirm.</li>
         <li>Dashed items are <b>not in yet</b>. Do not hand out anything in their place.</li>
       </ol>
       <div class="warn"><b>Pickups are after 12pm only.</b> If someone comes earlier, ask them to come back after 12. Someone else can collect for them if the customer has told Dave the name.</div>
     </div>
-    <div class="qr"><div id="qr"></div><small>Scan to open the collections app</small></div>
+    <div class="qr"><div id="qr"></div><small>Scan to open the app. This code carries the shop key, so it works on any phone.</small></div>
   </div>
   <div class="meta"><span>Paper backup. If the app is down, tick here and write your initials, then update the app later.</span><span id="asof"></span></div>
   <table id="tbl">
@@ -79,10 +80,11 @@
   if(params.get('k')){ls('rc_key',key);history.replaceState(null,'',location.pathname);}
   document.getElementById('print').onclick=function(){window.print()};
   document.getElementById('back').onclick=function(){location.href='./'};
+  document.getElementById('dl').onclick=function(){var c=document.querySelector('#qr canvas'),img=document.querySelector('#qr img');var a=document.createElement('a');a.download='collections-app-qr.png';a.href=c?c.toDataURL('image/png'):(img?img.src:'');if(a.href)a.click();};
   if(!key){document.getElementById('page').hidden=true;document.getElementById('nokey').hidden=false;return;}
 
   var appUrl=location.origin+location.pathname.replace(/print\.html$/,'')+'?k='+encodeURIComponent(key);
-  new QRCode(document.getElementById('qr'),{text:appUrl,width:150,height:150,correctLevel:QRCode.CorrectLevel.M});
+  new QRCode(document.getElementById('qr'),{text:appUrl,width:220,height:220,correctLevel:QRCode.CorrectLevel.M});
 
   var NAME={"ETB":"30th ETB","DR ETB":"Destined Rivals ETB","DR Booster Display":"DR Booster Display","Booster Bundle":"Booster Bundle","Mini Tin":"Mini Tin","2-Pack Blister":"2-Pack Blister","Tech Sticker":"Tech Sticker","ex Box Sylveon":"ex Box Sylveon","ex Box Greninja":"ex Box Greninja","ex Tin Sylveon":"ex Tin Sylveon","ex Tin Greninja":"ex Tin Greninja","Poster":"Poster Collection","Binder":"Binder Collection","First Partner S3":"First Partner S3","Prismatic SPC":"Prismatic SPC","AH Premium Poster":"AH Premium Poster","UPC Day":"UPC Day","UPC Night":"UPC Night"};
   function nice(l){var m=l.match(/^(.*?)(\s\(.*\))?$/);return (NAME[m[1]]||m[1])+(m[2]||'');}
